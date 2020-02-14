@@ -91,7 +91,7 @@ class VisualGridRunner(EyesRunner):
         # type: () -> None
         logger.debug("VisualGridRunner.stop()")
         while sum(r.score for r in self.all_running_tests) > 0:
-            datetime_utils.sleep(500)
+            datetime_utils.sleep(500, msg="Waiting for finishing tests in stop")
         self.still_running = False
         for future in concurrent.futures.as_completed(self._future_to_task):
             task = self._future_to_task[future]
@@ -113,10 +113,20 @@ class VisualGridRunner(EyesRunner):
             states = list(set([t.state for t in self.all_running_tests]))
             if len(states) == 1 and states[0] == "completed":
                 break
-            datetime_utils.sleep(500)
+            datetime_utils.sleep(
+                500,
+                msg="Waiting for state completed in get_all_test_results_impl",
+                verbose=False,
+            )
 
         all_results = []
         for test, test_result in iteritems(self._all_test_result):
+            if test.pending_exceptions:
+                logger.error(
+                    "During test execution above exception raised. \n {:s}".join(
+                        str(e) for e in test.pending_exceptions
+                    )
+                )
             exception = None
             if test.test_result is None:
                 exception = TestFailedError("Test haven't finished correctly")
