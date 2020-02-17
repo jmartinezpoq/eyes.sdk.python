@@ -199,7 +199,9 @@ class RenderTask(VGTask):
         for r_url in set(resource_urls + discovered_resources_urls):
             self.resource_cache.fetch_and_store(r_url, get_resource)
 
-        for r_url, val in iteritems(self.resource_cache):
+        # populate request_resources by update() because atomic operation
+        self.request_resources.update(self.resource_cache)
+        for r_url, val in iteritems(self.request_resources):
             if val is None:
                 val = VGResource.EMPTY(r_url)
             self.request_resources[r_url] = val
