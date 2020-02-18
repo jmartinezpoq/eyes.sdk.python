@@ -36,7 +36,7 @@ class VisualGridRunner(EyesRunner):
     def __init__(self, concurrent_sessions=None):
         # type: (Optional[int]) -> None
         super(VisualGridRunner, self).__init__()
-        self._all_test_result = {}  # type: Dict[RunningTest, TestResults]
+        self._all_test_results = {}  # type: Dict[RunningTest, TestResults]
 
         kwargs = {}
         if sys.version_info >= (3, 6):
@@ -61,7 +61,7 @@ class VisualGridRunner(EyesRunner):
 
     def aggregate_result(self, test, test_result):
         # type: (RunningTest, TestResults) -> None
-        self._all_test_result[test] = test_result
+        self._all_test_results[test] = test_result
 
     def render_info(self, eyes_connector):
         # type: (EyesConnector) -> RenderingInfo
@@ -82,7 +82,7 @@ class VisualGridRunner(EyesRunner):
                 task = self.task_queue.pop()
                 logger.debug("VisualGridRunner got task %s" % task)
             except IndexError:
-                datetime_utils.sleep(1000)
+                datetime_utils.sleep(1000, msg="Waiting for task")
                 continue
             future = self._executor.submit(lambda task: task(), task)
             self._future_to_task[future] = task
@@ -120,7 +120,7 @@ class VisualGridRunner(EyesRunner):
             )
 
         all_results = []
-        for test, test_result in iteritems(self._all_test_result):
+        for test, test_result in iteritems(self._all_test_results):
             if test.pending_exceptions:
                 logger.error(
                     "During test execution above exception raised. \n {:s}".join(
