@@ -113,9 +113,7 @@ class VisualGridRunner(EyesRunner):
             if len(states) == 1 and states[0] == "completed":
                 break
             datetime_utils.sleep(
-                500,
-                msg="Waiting for state completed in get_all_test_results_impl",
-                verbose=False,
+                1500, msg="Waiting for state completed in get_all_test_results_impl",
             )
 
         all_results = []

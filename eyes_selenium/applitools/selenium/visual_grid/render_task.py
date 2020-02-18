@@ -230,7 +230,7 @@ class RenderTask(VGTask):
                     fails_count += 1
                 finally:
                     iterations += 1
-                    datetime_utils.sleep(500, msg="Rendering...")
+                    datetime_utils.sleep(1500, msg="Rendering...")
                 if statuses or 0 < fails_count < 3:
                     break
             finished = bool(
